@@ -1,0 +1,15 @@
+package scheduling;
+
+import java.util.Timer;
+
+public class MyScheduler {
+	public static void main(String[] args) {
+		Timer timer = new Timer();
+		{
+			Scheduler myTask = new Scheduler(timer);
+			int firstSart = 10000; 
+			int period = 10000 * 2; 
+			timer.schedule(myTask, firstSart, period);
+		}
+	}
+}

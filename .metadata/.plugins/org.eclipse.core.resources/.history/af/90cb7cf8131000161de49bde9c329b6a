@@ -1,0 +1,38 @@
+import java.util.Iterator;
+import java.util.List;
+
+import com.github.dockerjava.api.model.Container;
+
+class Robin {
+	private Container i;
+
+	public Robin(Container i) {
+		this.i = i;
+	}
+
+	public Container call() {
+		return i;
+	}
+}
+
+public class RoundRobin {
+
+	private List<Container> list;
+	Iterator<Container> it;
+
+	public RoundRobin(List<Container> list) {
+
+		this.list = list;
+		it = list.iterator();
+	}
+
+	public Container next() {
+		// if we get to the end, start again
+		if (!it.hasNext()) {
+			it = list.iterator();
+		}
+		Robin robin = it.next();
+
+		return robin.call();
+	}
+}

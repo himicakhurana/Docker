@@ -1,0 +1,13 @@
+import java.util.List;
+import java.util.Map;
+
+public class Result {
+	Container container;
+	Map m;
+
+	Result(List containers, Map m) {
+		this.containers = containers;
+		this.m = m;
+	}
+
+}

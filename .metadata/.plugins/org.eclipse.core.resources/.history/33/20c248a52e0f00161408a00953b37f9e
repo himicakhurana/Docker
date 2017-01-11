@@ -1,0 +1,39 @@
+package scheduling;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+
+
+public class ExecJava {
+	public static void main(String args[]) {
+		   Process proc;
+		
+		try {
+			proc = Runtime.getRuntime().exec(" java -cp Pipeline.jar ui.cli.Main -execute VMexample-2.pipe");
+		
+		    proc.waitFor();
+		    // Then retreive the process output
+		    InputStream in = proc.getInputStream();
+		    InputStream err = proc.getErrorStream();
+
+		    byte b[]=new byte[in.available()];
+		    in.read(b,0,b.length);
+		    System.out.println(new String(b));
+
+		    byte c[]=new byte[err.available()];
+		    err.read(c,0,c.length);
+		    System.out.println(new String(c));
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

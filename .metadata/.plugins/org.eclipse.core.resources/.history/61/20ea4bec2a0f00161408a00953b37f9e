@@ -1,0 +1,28 @@
+package scheduling;
+import java.io.BufferedReader;
+import java.io.IOException;
+
+import org.apache.tools.ant.taskdefs.Execute;
+
+public class ExecJava {
+public static void main(String args[]){
+	 try { 
+         Process p = Runtime.getRuntime().exec("javac sam2.java");
+         Process p2 = Runtime.getRuntime().exec("java sam2");
+         BufferedReader in = new BufferedReader(  
+                            new InputStreamReader(p2.getInputStream()));
+
+         OutputStream out = p.getOutputStream();
+         String line = null; 
+         line = in.readLine();
+         System.out.println(line);
+         input=input+"\n";
+         out.write(input.getBytes());
+         p.wait(10000);
+         out.flush();
+    }catch (IOException e) {  
+         e.printStackTrace();  
+    }  
+}
+}
+

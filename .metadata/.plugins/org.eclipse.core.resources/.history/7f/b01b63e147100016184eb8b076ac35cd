@@ -1,0 +1,10 @@
+
+public class ResultMap {
+	List<Result> res;
+	Map m;
+
+	ResultMap(List r, Map m) {
+		this.res = r;
+		this.m = m;
+	}
+}

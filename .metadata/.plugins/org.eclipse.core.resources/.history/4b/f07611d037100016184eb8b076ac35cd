@@ -1,0 +1,40 @@
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.core.DockerClientBuilder;
+
+public class Scheduler extends TimerTask {
+	Timer timer;
+	int count = 0;
+	DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+
+	Map<String, Integer> imageMap = new HashMap<>();
+
+	public Scheduler() {
+	}
+
+	public Scheduler(Timer timer) {
+		this.timer = timer;
+	}
+
+	public void toDo() {
+		List<Container> containers = dockerClient.listContainersCmd().exec();
+		if(imageMap.keySet().contains(""))
+		System.out.println(" Count-> " + (count++) + " : Hello World ! This is java scheduler ");
+	}
+
+	@Override
+	public void run() {
+		toDo();
+		if (count > Integer.MAX_VALUE) {
+			// this is the condition when you want to stop the // task.
+			timer.cancel();
+		}
+	}
+}

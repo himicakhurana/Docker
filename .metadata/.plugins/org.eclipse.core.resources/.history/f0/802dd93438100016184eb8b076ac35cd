@@ -1,0 +1,59 @@
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.core.DockerClientBuilder;
+
+public class Scheduler extends TimerTask {
+	Timer timer;
+	int count = 0;
+	DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+
+	Map<String, Integer> imageMap = new HashMap<>();
+
+	public Scheduler() {
+	}
+
+	public Scheduler(Timer timer) {
+		this.timer = timer;
+	}
+
+	public void toDo() {
+		List<Container> containers = dockerClient.listContainersCmd().exec();
+		for (Container c : containers) {
+			if (!imageMap.keySet().contains(c.getId())) {
+				imageMap.put(c.getId(), randInt(1000, 3000));
+			}
+			System.out.println(" Count-> " + (count++) + " : Hello World ! This is java scheduler ");
+		}
+
+	}
+
+	@Override
+	public void run() {
+		toDo();
+		if (count > Integer.MAX_VALUE) {
+			count = 0;
+			// this is the condition when you want to stop the // task.
+			// timer.cancel();
+		}
+	}
+
+	public static int randInt(int min, int max) {
+
+		// Usually this can be a field rather than a method variable
+		Random rand = new Random();
+
+		// nextInt is normally exclusive of the top value,
+		// so add 1 to make it inclusive
+		int randomNum = rand.nextInt((max - min) + 1) + min;
+
+		return randomNum;
+	}
+}

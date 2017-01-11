@@ -1,0 +1,58 @@
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.core.DockerClientBuilder;
+
+/**
+ * Servlet implementation class Timer
+ */
+public class TimerServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public TimerServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+
+		List<Container> containers = dockerClient.listContainersCmd().exec();
+		for (Container c : containers) {
+			if (!imageMap.keySet().contains(c.getId())) {
+				imageMap.put(c.getId(), randInt(1000, 3000));
+			}
+			System.out.println(" Count-> " + (count++) + " : Hello World ! This is java scheduler ");
+		}
+		Util.sfs(cont, imageMap);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}

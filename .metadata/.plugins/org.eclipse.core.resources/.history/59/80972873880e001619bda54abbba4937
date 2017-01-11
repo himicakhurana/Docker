@@ -1,0 +1,32 @@
+package dockerjavaclient;
+
+import java.util.List;
+
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.Image;
+import com.github.dockerjava.core.DockerClientBuilder;
+
+public class testing {
+	public static void main(String args[]) {
+		DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+/*				getInstance("http://localhost:2375").build();
+ * 
+*/	
+	/*	dockerClient.unpauseContainerCmd("c225a1c18b3a324651effb30ee29bc5d11f9bc1456240501eb07fbf094c06f18");
+		dockerClient.commitCmd("c225a1c18b3a324651effb30ee29bc5d11f9bc1456240501eb07fbf094c06f18");*/
+		dockerClient.pauseContainerCmd("716ff23f875d4c28f1c697f043a1f76991d7821a934662548f0c2b83b740a32d");
+		List<Image> images = dockerClient.listImagesCmd().exec();
+
+		    for(int i=0; i < images.size(); i++){
+		        System.out.println(images.get(i));
+		    }
+		    List<Container> containers = dockerClient.listContainersCmd().exec();
+
+		    for(int i=0; i < containers.size(); i++){
+		    	System.out.println(containers.get(i).getId());
+		        System.out.println(containers.get(i));
+		    }
+		    System.out.println("hi");
+	}
+}

@@ -1,0 +1,116 @@
+var timeinterval1;
+var timeinterval2;
+
+var map2;
+
+$("#setpolicy")
+		.on(
+				'click',
+				function() {
+					var pol = $("#pol").val();
+					var nocont = $("#noContainers").val();
+					$
+							.ajax({
+								type : "GET",
+								dataType : "json",
+								data : {
+									policy : pol,
+									nocont : nocont
+								},
+								async : true,
+								url : "/DockerSchedule/DockSchedule", // Relative
+								// or
+								// absolute
+								// path
+								// to response.php file
+								success : function(data) {
+									favappend(data, pol);
+									map2 = data.map;
+									console
+											.log("Form submitted successfully.\nReturned json:aa "
+													+ map2);
+								}
+
+							});
+					// timeinterval1 = setInterval('populateFavUpdate()',
+					// 20000);
+					// timeinterval2 = setInterval('populateFavFetch()', 10000);
+
+					return false;
+				});
+$("#stop").on('click', function() {
+	clearInterval(timeinterval1);
+	clearInterval(timeinterval2);
+
+});
+function populateFavUpdate() {
+	var pol = $("#pol").val();
+
+	var x;
+	if (map2) {
+		x = JSON.stringify(map2);
+	}
+	var nocont = $("#noContainers").val();
+	$.ajax({
+		type : "GET",
+		dataType : "json",
+		data : {
+			policy : pol,
+			nocont : nocont,
+			imageMap : x
+		},
+		async : true,
+		url : "/DockerSchedule/UpdateStatus", // Relative or absolute path
+		// to response.php file
+		success : function(data) {
+			console.log(data);
+			favappend(data, pol);
+			console.log("Form submitted successfully.\nReturned json:aa ");
+		}
+
+	});
+}
+function populateFavFetch() {
+	var pol = $("#pol").val();
+
+	var x;
+	if (map2) {
+		x = JSON.stringify(map2);
+	}
+	var nocont = $("#noContainers").val();
+	$.ajax({
+		type : "GET",
+		dataType : "json",
+		data : {
+			policy : pol,
+			nocont : nocont,
+		},
+		async : true,
+		url : "/DockerSchedule/FetchStatus", // Relative or absolute path
+		// to response.php file
+		success : function(data) {
+			console.log(data);
+			favappend(data, pol);
+			console.log("Form submitted successfully.\nReturned json:aa ");
+		}
+
+	});
+}
+function favappend(data, pol) {
+	$(".dynamic-remove-fav").each(function(index) {
+		$(this).remove();
+	});
+	/*
+	 * var json = $.parseJSON(data);
+	 */
+	if (pol != "sjf") {
+		$.each(data, function(idx, obj) {
+
+			$("#favorites").append(
+					'<tr class="dynamic-remove-fav"><td>' + obj.id
+							+ '</td><td>' + obj.names[0] + '</td><td>'
+							+ obj.status + '</td></tr>');
+
+		});
+	}
+}

@@ -1,0 +1,15 @@
+import java.util.List;
+import java.util.Map;
+
+import com.github.dockerjava.api.model.Container;
+
+public class Result {
+	Container container;
+	int m;
+
+	Result(List containers, int m) {
+		this.container = containers;
+		this.m = m;
+	}
+
+}

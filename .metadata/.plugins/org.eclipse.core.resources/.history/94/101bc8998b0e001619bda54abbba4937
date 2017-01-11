@@ -1,0 +1,358 @@
+package scheduling;
+
+import java.util.List;
+
+public class RoundRobin {
+    
+    int [] temp;
+    int [] tempWaitinTime;
+    int commBT, k, tq;
+    int[][] d;
+    int btcache;
+    
+    void start( ){
+        for (int i = 0; i < d.length; i++) {
+            int bt  = d[i][1];
+            if( bt > 0){
+                if( bt <= tq){
+                    temp[i] = btcache+bt;
+                    btcache = temp[i];
+                    k += bt;
+                    bt -= bt;
+                    
+                }
+                else{
+                    temp[i] = btcache+tq;
+                    btcache = temp[i];
+                    bt -= tq;
+                    k += tq;
+                }
+                
+                d[i][1] = bt;
+                
+            }
+        }
+        if( k!= commBT)
+        start();
+    }
+    
+    private void display(List<Job> jobList) {
+        float avgTurnArroundTime = 0;
+        float avgWaitigTime = 0;
+        int c = 1;
+        System.out.println("============================================ ");
+        System.out.println("Process ID | Turnaround time | Waiting time ");
+        System.out.println("============================================ ");
+        Object[] job = jobList.toArray();
+        for (int i : temp) {
+            Job job1 = (Job) job[c-1];
+            System.out.println( "    " + c + "       |     " + i +"           |   "+(i-job1.getCpuTime()));
+            System.out.println("----------------------------------------");
+            avgTurnArroundTime += i;
+            avgWaitigTime += (i-job1.getCpuTime());
+            c++;
+        }
+        System.out.println("===============================================");
+        System.out.println( "Avg waiting time = " + avgWaitigTime/temp.length);
+        System.out.println("===============================================");
+        System.out.println( "Avg turn round time = " + avgTurnArroundTime/temp.length);
+        System.out.println("===============================================");
+    }
+    public void run(List<Job> jobList, int quantum) {
+        
+        int pcount = jobList.size();
+        d = new int[pcount][2];
+        
+        temp = new int[pcount];
+        int count = 0;
+        for(Job job:jobList){
+            d[count][0] = count;
+            
+            int m = job.getCpuTime();
+            d[count][1] = m;
+            
+            commBT += m;
+            count++;
+        }
+        
+        tq = quantum;
+        start();
+        display(jobList);
+        
+    }
+}
+
+
+AllocationStrategy.java
+
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
+
+/* implement this class for all three strategies */
+
+public abstract class AllocationStrategy {
+    protected List<Job> Jobs;
+    protected ArrayList<Job> Queue;
+    
+    public AllocationStrategy(List<Job> jobs) {
+        super();
+        Jobs = jobs;
+    }
+    
+    public abstract void run();
+    // update current job by 1 tick
+    // check if the job queue might need to be changed.
+    // check for jobs to add to the queue
+}
+
+Job.java
+
+
+
+
+public class Job {
+    private int id, submitTime, CPUTime, CPUTimeLeft;
+    
+    private int startTime = 0, endTime = 0;
+    
+    
+    public int ProcessCompletionTime;
+    public int processArrivalTime;
+    public int waitingTime;
+    public int turnAroundTime;
+    private JobFinishEvent evt;
+    
+    private int arrivalTime,cpuTime,processId;
+    
+    public Job(int id, int submitTime, int CPUTime, JobFinishEvent evt) {
+        super();
+        this.id = id;
+        this.submitTime = submitTime;
+        this.CPUTime = CPUTime;
+        this.CPUTimeLeft = CPUTime;
+        this.evt = evt;
+    }
+    
+    public Job(int processId, int arrivalTime, int cpuTime) {
+        
+        this.processId = processId;
+        this.arrivalTime = arrivalTime;
+        this.cpuTime = cpuTime;
+        
+    }
+    
+    public void start(int sysTime) {
+        startTime = sysTime;
+    }
+    
+    public void tick(int sysTime) {
+        CPUTimeLeft --;
+        if (CPUTimeLeft <= 0){
+            endTime = sysTime;
+            evt.onFinish(this);
+        }
+        
+    }
+    
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public int getSubmitTime() {
+        return submitTime;
+    }
+    
+    public void setSubmitTime(int submitTime) {
+        this.submitTime = submitTime;
+    }
+    
+    public int getCPUTime() {
+        return CPUTime;
+    }
+    
+    public void setCPUTime(int cPUTime) {
+        CPUTime = cPUTime;
+    }
+    
+    public int getCPUTimeLeft() {
+        return CPUTimeLeft;
+    }
+    
+    public void setCPUTimeLeft(int cPUTimeLeft) {
+        CPUTimeLeft = cPUTimeLeft;
+    }
+    
+    public int getStartTime() {
+        return startTime;
+    }
+    
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+    
+    public int getEndTime() {
+        return endTime;
+    }
+    
+    public void setEndTime(int endTime) {
+        this.endTime = endTime;
+    }
+    
+    public int getArrivalTime() {
+        return arrivalTime;
+    }
+    
+    public void setArrivalTime(int arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+    
+    public int getCpuTime() {
+        return cpuTime;
+    }
+    
+    public void setCpuTime(int cpuTime) {
+        this.cpuTime = cpuTime;
+    }
+    
+    public int getProcessId() {
+        return processId;
+    }
+    
+    public void setProcessId(int processId) {
+        this.processId = processId;
+    }
+    
+    
+}
+
+
+
+
+JobFinishEvent.java
+
+
+
+public interface JobFinishEvent {
+    public void onFinish(Job j);
+}
+
+
+
+Question1.java
+
+
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+
+public class Question1 {
+    
+    public static void main(String[] args) {
+        // Process command line arguments
+        // read the file
+        
+        
+        Scanner sc = new Scanner(System.in);
+        Scanner sc1 = new Scanner(System.in);
+        Scanner sc2 = new Scanner(System.in);
+        
+        
+        String filename ;
+        String allocationStrategy;
+        int quantum=20;
+        
+        /*filename = args[0];
+        allocationStrategy = args[1];*/
+        
+        filename = "testing.txt";
+        allocationStrategy = "FCFS";
+        
+        
+        //filename = sc.nextLine();
+        
+        if(args.length==3){
+            quantum = new Integer(args[2]);
+        }
+        
+        BufferedReader br = null;
+        
+        try {
+            
+            String sCurrentLine;
+            
+            br = new BufferedReader(new FileReader("C://Users/Arnav/Desktop/"+filename));
+            //System.out.println("processId  arrivalTime  cpuTime");
+            
+            List<Job> jobList = new ArrayList<Job>();
+            while ((sCurrentLine = br.readLine()) != null) {
+                
+                String a[] = sCurrentLine.split(",");
+                int processId = new Integer(a[0]);
+                int arrivalTime = new Integer(a[1]);
+                int cpuTime = new Integer(a[2]);
+                
+                Job job = new Job(processId,arrivalTime,cpuTime);
+                
+                jobList.add(job);
+                
+                //System.out.println(processId+" "+ arrivalTime+" " + cpuTime);
+            }
+            
+            if("FCFS".equalsIgnoreCase(allocationStrategy)){
+                
+                FirstComeFirstServed firstComeFirstServed = new FirstComeFirstServed(jobList);
+                firstComeFirstServed.run(jobList);
+                
+                }else if("SRT".equalsIgnoreCase(allocationStrategy)){
+                
+                ShortestRemainingTime shortestRemainingTime = new ShortestRemainingTime(jobList);
+                shortestRemainingTime.run(jobList);
+                
+                }else if("RR".equalsIgnoreCase(allocationStrategy)){
+                
+                RoundRobin roundRobin = new RoundRobin();
+                roundRobin.run(jobList,quantum);
+                
+            }
+            
+            } catch (IOException e) {
+            e.printStackTrace();
+            } finally {
+            try {
+                if (br != null)br.close();
+                } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
+        JobFinishEvent callback = new JobFinishEvent() {
+            @Override
+            public void onFinish(Job j) {
+                // this will be called when a job is finished.
+            }
+        };
+        
+        
+        /*// example job addition:
+        ArrayList jobs = new ArrayList();
+        jobs.add(new Job(1, 0, 2, callback));
+        jobs.add(new Job(2, 1, 3, callback));
+        RoundRobin rr = new RoundRobin(jobs);
+        rr.run();
+        */
+    }
+    
+}

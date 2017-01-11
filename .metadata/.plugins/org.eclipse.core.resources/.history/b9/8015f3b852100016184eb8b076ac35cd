@@ -1,0 +1,209 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.Image;
+import com.github.dockerjava.core.DockerClientBuilder;
+
+public class Util {
+
+	public static List<Container> fcfs(String nocont) {
+		int no = Integer.parseInt(nocont);
+		// TODO Auto-generated method stub
+		DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+		List<Image> images = dockerClient.listImagesCmd().exec();
+
+		for (int i = 0; i < images.size(); i++) {
+			/*
+			 * System.out.println(images.get(i));
+			 */ }
+		List<Container> containers = dockerClient.listContainersCmd().exec();
+		Collections.sort(containers, new Comparator<Container>() {
+
+			public int compare(Container o1, Container o2) {
+				return (int) (o2.getCreated() - o1.getCreated());
+			}
+		});
+		for (int i = 0; i < no; i++) {
+			if (containers.get(i).getStatus().contains("(Paused)")) {
+
+				dockerClient.unpauseContainerCmd(containers.get(i).getId()).exec();
+			}
+		}
+		for (int i = no; i < containers.size(); i++) {
+			if (!containers.get(i).getStatus().contains("(Paused)")) {
+
+				dockerClient.pauseContainerCmd(containers.get(i).getId()).exec();
+			}
+		}
+		containers = dockerClient.listContainersCmd().exec();
+
+		return containers;
+	}
+
+	public static List<Container> random(String nocont) {
+		int no = Integer.parseInt(nocont);
+		// TODO Auto-generated method stub
+		DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+		List<Image> images = dockerClient.listImagesCmd().exec();
+
+		for (int i = 0; i < images.size(); i++) {
+			/*
+			 * System.out.println(images.get(i));
+			 */ }
+		List<Container> containers = dockerClient.listContainersCmd().exec();
+		Collections.shuffle(containers);
+
+		for (int i = no; i < containers.size(); i++) {
+			if (!containers.get(i).getStatus().contains("(Paused)")) {
+
+				dockerClient.pauseContainerCmd(containers.get(i).getId()).exec();
+			}
+		}
+		containers = dockerClient.listContainersCmd().exec();
+
+		return containers;
+	}
+
+	public static List<Container> rr(String nocont) {
+		// TODO Auto-generated method stub
+		int no = Integer.parseInt(nocont);
+		// TODO Auto-generated method stub
+
+		/*
+		 * List<Image> images = dockerClient.listImagesCmd().exec();
+		 * 
+		 * for (int i = 0; i < images.size(); i++) {
+		 * 
+		 * System.out.println(images.get(i)); }
+		 */
+		DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+		List<Container> containers = dockerClient.listContainersCmd().exec();
+		List<Robin> items = new ArrayList<Robin>();
+		for (Container c : containers) {
+			items.add(new Robin(c));
+		}
+		RoundRobin round;
+
+		round = new RoundRobin(items);
+		int n = 0;
+		HashSet<String> set = new HashSet<String>();
+		while (null != round.next()) {
+			Container c = round.next();
+			if (!set.contains(c.getId())) {
+				set.add(c.getId());
+				if (c.getStatus().contains("(Paused)") && n < no) {
+					dockerClient.unpauseContainerCmd(c.getId()).exec();
+					n++;
+				} else {
+					if (!c.getStatus().contains("(Paused)")) {
+						dockerClient.pauseContainerCmd(c.getId()).exec();
+
+					}
+				}
+			} else {
+				break;
+			}
+			/*
+			 * for (int i = no; i < containers.size(); i++) {
+			 * dockerClient.pauseContainerCmd(containers.get(i).getId()).exec();
+			 * }
+			 */
+
+		}
+		containers = dockerClient.listContainersCmd().exec();
+
+		return containers;
+
+	}
+
+	public static List<Result> sfs(int cont, Map<String, Integer> imageMap) {
+		TreeMap<String, Integer> map = sortMapByValue((HashMap<String, Integer>) imageMap);
+		int k = 0;
+		System.out.println(map);
+		Map<String, Integer> finalMap = new HashMap<String, Integer>();
+		for (String s : map.keySet()) {
+			if (k < cont) {
+				finalMap.put(s, map.get(s));
+			} else {
+				break;
+			}
+		}
+		System.out.println(finalMap);
+
+		DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+		List<Container> containers = dockerClient.listContainersCmd().exec();
+		k = 0;
+
+		for (Container c : containers) {
+			for (Entry e : map.entrySet()) {
+				if ((cont-k)>=0) {
+					if (!c.getStatus().contains("(Paused)")) {
+						dockerClient.pauseContainerCmd(c.getId()).exec();
+
+					}else{
+						dockerClient.pauseContainerCmd(c.getId()).exec();
+
+					}	
+				}
+
+			}
+			if (null != finalMap.get(c.getId())) {
+				if (c.getStatus().contains("(Paused)")) {
+					dockerClient.unpauseContainerCmd(c.getId()).exec();
+				}
+
+			}
+			if (!c.getStatus().contains("(Paused)")) {
+				dockerClient.pauseContainerCmd(c.getId()).exec();
+
+			}
+		}
+		containers = dockerClient.listContainersCmd().exec();
+		List<Result> results = new ArrayList<Result>();
+
+		for (Container c : containers) {
+			Result r = new Result(c, 0);
+			results.add(r);
+
+		}
+		return results;
+		// TODO Auto-generated method stub
+
+	}
+
+	public static TreeMap<String, Integer> sortMapByValue(HashMap<String, Integer> map) {
+		class ValueComparator implements Comparator<String> {
+
+			HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+			public ValueComparator(HashMap<String, Integer> map) {
+				this.map.putAll(map);
+			}
+
+			@Override
+			public int compare(String s1, String s2) {
+				if (map.get(s1) >= map.get(s2)) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		}
+		Comparator<String> comparator = new ValueComparator(map);
+		// TreeMap is a map sorted by its keys.
+		// The comparator is used to sort the TreeMap by keys.
+		TreeMap<String, Integer> result = new TreeMap<String, Integer>(comparator);
+		result.putAll(map);
+		return result;
+	}
+
+}

@@ -1,0 +1,16 @@
+package scheduling;
+
+import java.util.Timer;
+
+public class MyScheduler {
+	public static void main(String[] args) {
+		Timer timer = new Timer();
+		{
+			Scheduler myTask = new Scheduler(timer);
+			int firstSart = 1000; 
+			int period = 1000 * 2; 
+			timer.schedule(myTask, firstSart, period);
+			// the time specified in millisecond.
+		}
+	}
+}

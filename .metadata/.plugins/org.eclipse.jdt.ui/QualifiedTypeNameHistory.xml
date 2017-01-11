@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.spotify.docker.client.DockerClient"/>
+<fullyQualifiedTypeName name="com.spotify.docker.client.DefaultDockerClient"/>
+<fullyQualifiedTypeName name="com.spotify.docker.client.messages.AuthConfig"/>
+<fullyQualifiedTypeName name="com.spotify.docker.client.messages.PortBinding"/>
+<fullyQualifiedTypeName name="com.spotify.docker.client.messages.HostConfig"/>
+<fullyQualifiedTypeName name="com.spotify.docker.client.messages.ContainerConfig"/>
+<fullyQualifiedTypeName name="com.spotify.docker.client.messages.ContainerCreation"/>
+<fullyQualifiedTypeName name="com.spotify.docker.client.messages.ContainerInfo"/>
+<fullyQualifiedTypeName name="com.spotify.docker.client.LogStream"/>
+<fullyQualifiedTypeName name="com.github.dockerjava.api.DockerClient"/>
+<fullyQualifiedTypeName name="com.github.dockerjava.api.model.Image"/>
+<fullyQualifiedTypeName name="com.github.dockerjava.core.DockerClientBuilder"/>
+<fullyQualifiedTypeName name="java.util.TimerTask"/>
+<fullyQualifiedTypeName name="java.util.Timer"/>
+<fullyQualifiedTypeName name="java.util.Collections"/>
+<fullyQualifiedTypeName name="java.util.Comparator"/>
+<fullyQualifiedTypeName name="java.io.BufferedReader"/>
+<fullyQualifiedTypeName name="java.io.InputStreamReader"/>
+<fullyQualifiedTypeName name="java.io.OutputStream"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="java.lang.Integer"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="javafx.beans.property.adapter.ReadOnlyJavaBeanIntegerPropertyBuilder"/>
+<fullyQualifiedTypeName name="java.util.HashSet"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="java.util.TreeMap"/>
+<fullyQualifiedTypeName name="com.github.dockerjava.api.model.Container"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="com.google.gson.JsonParser"/>
+<fullyQualifiedTypeName name="com.google.gson.JsonObject"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
+<fullyQualifiedTypeName name="java.util.Map.Entry"/>
+</qualifiedTypeNameHistroy>

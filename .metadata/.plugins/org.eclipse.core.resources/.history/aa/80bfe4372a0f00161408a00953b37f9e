@@ -1,0 +1,18 @@
+package scheduling;
+import java.io.IOException;
+
+import org.apache.tools.ant.taskdefs.Execute;
+
+public class ExecJava {
+public static void main(String args[]){
+	Execute exe = new Execute();
+	exe.setCommandline("cd C:\Users\HIMICA\Documents\code\LONI\Pipeline-6.3-unix");
+	try {
+		exe.execute();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
+}
+

@@ -1,0 +1,7 @@
+package scheduling;
+
+import org.apache.tools.ant.taskdefs.Execute;
+
+Execute exe = new Execute();
+exe.setCommandline(new String[]{"java", "-version"});
+exe.execute();
